@@ -33,7 +33,7 @@ export const getAppPathMac = async (appID: string): Promise<ChildProcess> => {
 */
 export const getAppPathWin = async (appID: string): Promise<ChildProcess> => {
   // exec.exeのパスはtauri.conf.jsonに書き込むため，動的に取得しない
-  const ahk: Command = new Command('.resources/exec/exec', ['getAppPath', appID]) ;
+  const ahk: Command = Command.sidecar('.resources/exec/exec', ['getAppPath', appID]) ;
   const res: ChildProcess = await ahk.execute() ;
   return res ;
 } ;
@@ -95,7 +95,7 @@ const execJsWin = async (appID: string, scriptName: string, argv: Array<string> 
     エラーで止まることはなく，res.stderrにエラーメッセージが記録される
   */
   const jsPath: string = await resolveResource( await join(ResourceFolderName, JsFolderName, scriptName) ) ;
-  const ahk: Command = new Command('.resources/exec/exec', ['execJavaScript', appID, jsPath, ...argv]) ;
+  const ahk: Command = Command.sidecar('.resources/exec/exec', ['execJavaScript', appID, jsPath, ...argv]) ;
   const res: ChildProcess = await ahk.execute() ;
 
   return res ;
