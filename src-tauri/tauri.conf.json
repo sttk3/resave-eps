@@ -1,0 +1,76 @@
+{
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build",
+    "devPath": "http://localhost:1420",
+    "distDir": "../dist",
+    "withGlobalTauri": false
+  },
+  "package": {
+    "productName": "resaveEPS",
+    "version": "2.0.0"
+  },
+  "tauri": {
+    "allowlist": {
+      "all": false,
+      "dialog": {
+        "message": true
+      },
+      "fs": {
+        "scope": ["$RESOURCE/*"]
+      },
+      "os": {
+        "all": true
+      },
+      "path": {
+        "all": true
+      },
+      "shell": {
+        "execute": true,
+        "sidecar": true,
+        "open": true, 
+        "scope": [
+          {
+            "name": "run-applescript",
+            "cmd": "osascript",
+            "args": true
+          },
+          {
+            "name": "run-ahk",
+            "cmd": "$RESOURCE/exec/exec.exe",
+            "args": true
+          }
+        ]
+      }
+    },
+    "bundle": {
+      "active": true,
+      "targets": "all",
+      "identifier": "com.sttk3.resave-eps",
+      "icon": [
+        "icons/32x32.png",
+        "icons/128x128.png",
+        "icons/128x128@2x.png",
+        "icons/icon.icns",
+        "icons/icon.ico"
+      ],
+      "resources": [
+        ".resources/*"
+      ]
+    },
+    "security": {
+      "csp": null
+    },
+    "windows": [
+      {
+        "fullscreen": false,
+        "resizable": true,
+        "title": "resaveEPS 2.0.0",
+        "width": 500,
+        "height": 300,
+        "minWidth": 500,
+        "minHeight": 300
+      }
+    ]
+  }
+}
