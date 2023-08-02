@@ -36,8 +36,8 @@
             "args": true
           },
           {
-            "name": "run-ahk",
-            "cmd": "$RESOURCE/exec/exec.exe",
+            "name": ".resources/exec/exec",
+            "sidecar": true,
             "args": true
           }
         ]
@@ -53,6 +53,9 @@
         "icons/128x128@2x.png",
         "icons/icon.icns",
         "icons/icon.ico"
+      ],
+      "externalBin": [
+        ".resources/exec/exec"
       ],
       "resources": [
         ".resources/*"
