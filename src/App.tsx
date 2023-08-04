@@ -5,7 +5,6 @@ import { useEffect, useReducer } from 'preact/hooks' ;
 // tauri
 import { appWindow } from '@tauri-apps/api/window' ;
 import { listen, UnlistenFn } from '@tauri-apps/api/event' ;
-import { message } from '@tauri-apps/api/dialog' ;
 
 // adobe
 import '@spectrum-web-components/theme/sp-theme.js' ;
@@ -14,17 +13,18 @@ import '@spectrum-web-components/theme/src/themes.js' ;
 // sttk3
 import { iconDrop } from './icons' ;
 import { ActionType, defaultState, reducer } from './reducer' ;
-import { AppID } from './functions/constants' ;
-import { execJavaScript } from './functions/exec' ;
-import { resaveEPS } from './functions/resaveEPS' ;
 import './App.css' ;
+import { OS } from './functions/constants' ;
+import { resaveEPS } from './functions/resaveEPS' ;
+import { enable, disable } from './functions/globalShortcut' ;
+
 
 export const App = () => {
   const [state, dispatch] = useReducer(reducer, defaultState) ;
 
   // mount時初回実行
   useEffect(() => {
-    let unlistenThemeChanged: UnlistenFn, unlistenFileDrop: UnlistenFn, unlistenFileDropHover: UnlistenFn, unlistenFileDropCancelled: UnlistenFn ;
+    let unlistenThemeChanged: UnlistenFn, unlistenFileDrop: UnlistenFn, unlistenFileDropHover: UnlistenFn, unlistenFileDropCancelled: UnlistenFn, unlistenFocus: UnlistenFn, unlistenBlur: UnlistenFn ;
 
     (async () => {
       // theme-changedの監視を始める
@@ -53,11 +53,24 @@ export const App = () => {
       unlistenFileDropCancelled = await listen<string>('tauri://file-drop-cancelled', (event) => {
         dispatch({type: ActionType.setFileDropHover, payload: {value: false}}) ;
       }) ;
+
+      // Windows用globalShortcut操作
+      if(OS.type === 'Windows_NT') {
+        // ウインドウフォーカス時，globalShortcutを有効にする
+        unlistenFocus = await listen<string>('tauri://focus', enable) ;
+
+        // ウインドウのフォーカスが外れたとき，globalShortcutを無効にする
+        unlistenBlur = await listen<string>('tauri://blur', disable) ;
+
+        // 初回，明示的に有効化する。ここをsetFocusでするのは難しい
+        await enable() ;
+      }
     })() ;
     
     // unmount時，監視を止める
     return () => {
-      const unlistenList = [unlistenThemeChanged, unlistenFileDrop, unlistenFileDropHover, unlistenFileDropCancelled] ;
+      const unlistenList = [unlistenThemeChanged, unlistenFileDrop, unlistenFileDropHover, unlistenFileDropCancelled
+      , unlistenFocus, unlistenBlur] ;
       for(let unlisten of unlistenList) {
         if(unlisten) {unlisten() ;}
       }
