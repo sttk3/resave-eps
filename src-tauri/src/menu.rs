@@ -11,10 +11,8 @@ pub fn create(app_name: &String) -> Menu {
 pub fn create(_app_name: &String) -> Menu {
   use tauri::{ CustomMenuItem, MenuItem, Submenu } ;
 
-  // let close = CustomMenuItem::new("close".to_string(), "Close").accelerator("CommandOrControl+W") ;
-  // let quit = CustomMenuItem::new("quit".to_string(), "Quit").accelerator("CommandOrControl+Q") ;
-  let close = CustomMenuItem::new("close".to_string(), "Close") ;
-  let quit = CustomMenuItem::new("quit".to_string(), "Quit") ;
+  let close = CustomMenuItem::new("close".to_string(), "Close").accelerator("CommandOrControl+W") ;
+  let quit = CustomMenuItem::new("quit".to_string(), "Quit").accelerator("CommandOrControl+Q") ;
   let file_menu = Submenu::new(
     "File", 
     Menu::new()
@@ -28,7 +26,7 @@ pub fn create(_app_name: &String) -> Menu {
       .add_native_item(MenuItem::Cut)
       .add_native_item(MenuItem::Copy)
       .add_native_item(MenuItem::Paste)
-      .add_native_item(MenuItem::SelectAll),
+      .add_native_item(MenuItem::SelectAll)
   ) ;
 
   let menu = Menu::new()

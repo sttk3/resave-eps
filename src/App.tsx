@@ -54,7 +54,7 @@ export const App = () => {
         dispatch({type: ActionType.setFileDropHover, payload: {value: false}}) ;
       }) ;
 
-      // Windows用globalShortcut操作
+      // Windows限定globalShortcut操作
       if(OS.type === 'Windows_NT') {
         // ウインドウフォーカス時，globalShortcutを有効にする
         unlistenFocus = await listen<string>(TauriEvent.WINDOW_FOCUS, enable) ;
@@ -65,7 +65,7 @@ export const App = () => {
         // ウインドウを閉じるとき，globalShortcutを無効にする
         unlistenCloseRequested = await listen<string>(TauriEvent.WINDOW_CLOSE_REQUESTED, disable) ;
 
-        // 初回，明示的に有効化する。ここをsetFocusでするのは難しい
+        // 初回，明示的にglobalShortcutを有効化する。ここをsetFocusで実現するのは難しいようだ
         await enable() ;
       }
     })() ;

@@ -5,12 +5,18 @@
 */
 
 // tauri
-import { isRegistered, register, unregisterAll } from '@tauri-apps/api/globalShortcut' ;
+import { ShortcutHandler, isRegistered, register, unregisterAll } from '@tauri-apps/api/globalShortcut' ;
 
 // sttk3
 import { close, quit } from './process' ;
 
-const ShortcutList = [
+type ShortcutItem = {
+  'name': string, 
+  'key': string, 
+  'handler': ShortcutHandler, 
+} ;
+
+const ShortcutList: Array<ShortcutItem> = [
   {
     'name': 'close', 
     'key': 'CommandOrControl+W', 
@@ -26,14 +32,16 @@ const ShortcutList = [
 // globalShortcutを有効にする
 export const enable = async () => {
   for(let shortcut of ShortcutList) {
-    if( !(await isRegistered(shortcut.key)) ) {
+    const reserved = await isRegistered(shortcut.key) ;
+    if( !reserved ) {
       await register(shortcut.key, shortcut.handler) ;
+      console.log(`Registered shortcut "${shortcut.name}"`) ;
     }
   }
 } ;
 
 // globalShortcutを無効にする
 export const disable = async () => {
-  console.log(`unregisterAll Accelerator`) ;
+  console.log(`Unregistered all shortcuts`) ;
   await unregisterAll() ;
 } ;
