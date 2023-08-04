@@ -4,7 +4,7 @@ import { useEffect, useReducer } from 'preact/hooks' ;
 
 // tauri
 import { appWindow } from '@tauri-apps/api/window' ;
-import { listen, UnlistenFn } from '@tauri-apps/api/event' ;
+import { listen, TauriEvent, UnlistenFn } from '@tauri-apps/api/event' ;
 
 // adobe
 import '@spectrum-web-components/theme/sp-theme.js' ;
@@ -24,18 +24,18 @@ export const App = () => {
 
   // mount時初回実行
   useEffect(() => {
-    let unlistenThemeChanged: UnlistenFn, unlistenFileDrop: UnlistenFn, unlistenFileDropHover: UnlistenFn, unlistenFileDropCancelled: UnlistenFn, unlistenFocus: UnlistenFn, unlistenBlur: UnlistenFn ;
+    let unlistenThemeChanged: UnlistenFn, unlistenFileDrop: UnlistenFn, unlistenFileDropHover: UnlistenFn, unlistenFileDropCancelled: UnlistenFn, unlistenFocus: UnlistenFn, unlistenBlur: UnlistenFn, unlistenCloseRequested: UnlistenFn ;
 
     (async () => {
       // theme-changedの監視を始める
       const currentTheme = await appWindow.theme() ;
       dispatch({type: ActionType.setTheme, payload: {value: currentTheme ?? 'light'}}) ;
-      unlistenThemeChanged = await listen<string>('tauri://theme-changed', (event) => {
+      unlistenThemeChanged = await listen<string>(TauriEvent.WINDOW_THEME_CHANGED, (event) => {
         dispatch({type: ActionType.setTheme, payload: {value: event.payload}}) ;
       }) ;
 
       // file-dropの監視を始める
-      unlistenFileDrop = await listen<string>('tauri://file-drop', async (event) => {
+      unlistenFileDrop = await listen<string>(TauriEvent.WINDOW_FILE_DROP, async (event) => {
         // ドロップした後はずっとhover状態になるので，自力でOFFにする
         dispatch({type: ActionType.setFileDropHover, payload: {value: false}}) ;
 
@@ -45,22 +45,25 @@ export const App = () => {
       }) ;
 
       // file-drop-hoverの監視を始める
-      unlistenFileDropHover = await listen<string>('tauri://file-drop-hover', (event) => {
+      unlistenFileDropHover = await listen<string>(TauriEvent.WINDOW_FILE_DROP_HOVER, (event) => {
         dispatch({type: ActionType.setFileDropHover, payload: {value: true}}) ;
       }) ;
 
       // file-drop-cancelledの監視を始める
-      unlistenFileDropCancelled = await listen<string>('tauri://file-drop-cancelled', (event) => {
+      unlistenFileDropCancelled = await listen<string>(TauriEvent.WINDOW_FILE_DROP_CANCELLED, (event) => {
         dispatch({type: ActionType.setFileDropHover, payload: {value: false}}) ;
       }) ;
 
       // Windows用globalShortcut操作
       if(OS.type === 'Windows_NT') {
         // ウインドウフォーカス時，globalShortcutを有効にする
-        unlistenFocus = await listen<string>('tauri://focus', enable) ;
+        unlistenFocus = await listen<string>(TauriEvent.WINDOW_FOCUS, enable) ;
 
         // ウインドウのフォーカスが外れたとき，globalShortcutを無効にする
-        unlistenBlur = await listen<string>('tauri://blur', disable) ;
+        unlistenBlur = await listen<string>(TauriEvent.WINDOW_BLUR, disable) ;
+
+        // ウインドウを閉じるとき，globalShortcutを無効にする
+        unlistenCloseRequested = await listen<string>(TauriEvent.WINDOW_CLOSE_REQUESTED, disable) ;
 
         // 初回，明示的に有効化する。ここをsetFocusでするのは難しい
         await enable() ;
@@ -70,7 +73,7 @@ export const App = () => {
     // unmount時，監視を止める
     return () => {
       const unlistenList = [unlistenThemeChanged, unlistenFileDrop, unlistenFileDropHover, unlistenFileDropCancelled
-      , unlistenFocus, unlistenBlur] ;
+      , unlistenFocus, unlistenBlur, unlistenCloseRequested] ;
       for(let unlisten of unlistenList) {
         if(unlisten) {unlisten() ;}
       }

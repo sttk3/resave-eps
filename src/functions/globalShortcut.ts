@@ -8,13 +8,13 @@
 import { isRegistered, register, unregisterAll } from '@tauri-apps/api/globalShortcut' ;
 
 // sttk3
-import { quit } from './process' ;
+import { close, quit } from './process' ;
 
 const ShortcutList = [
   {
     'name': 'close', 
     'key': 'CommandOrControl+W', 
-    'handler': quit, 
+    'handler': close, 
   }, 
   {
     'name': 'quit', 
