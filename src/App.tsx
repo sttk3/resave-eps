@@ -5,6 +5,7 @@ import { useEffect, useReducer } from 'preact/hooks' ;
 // tauri
 import { appWindow } from '@tauri-apps/api/window' ;
 import { listen, TauriEvent, UnlistenFn } from '@tauri-apps/api/event' ;
+import { getMatches } from '@tauri-apps/api/cli' ;
 
 // adobe
 import '@spectrum-web-components/theme/sp-theme.js' ;
@@ -17,7 +18,7 @@ import './App.css' ;
 import { OS } from './functions/constants' ;
 import { resaveEPS } from './functions/resaveEPS' ;
 import { enable, disable } from './functions/globalShortcut' ;
-
+import { quit } from './functions/process' ;
 
 export const App = () => {
   const [state, dispatch] = useReducer(reducer, defaultState) ;
@@ -68,6 +69,16 @@ export const App = () => {
         // 初回，明示的にglobalShortcutを有効化する。ここをsetFocusで実現するのは難しいようだ
         await enable() ;
       }
+
+      // cliで実行された場合は処理する
+      getMatches().then(async (matches) => {
+        const argValue = matches.args.from?.value ;
+        if(Array.isArray(argValue)) {
+          const targetItems = argValue.filter((item) => {return (typeof item === 'string')}) ;
+          await resaveEPS(targetItems) ;
+        }
+        await quit() ;
+      }) ;
     })() ;
     
     // unmount時，監視を止める
