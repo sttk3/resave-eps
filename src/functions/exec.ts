@@ -113,9 +113,12 @@ export const execJavaScript = async (appID: string, scriptName: string, argv: Ar
   const appPathObj: ChildProcess = await getAppPath(appID) ;
   if(appPathObj.code) {return appPathObj ;}
 
+  const appPathText = appPathObj.stdout ;
+  if(appPathText === '') {return {code: 1, signal: null, stdout: '', stderr: 'Please start Adobe Illustrator and execute again.'} ;}
+
   switch(OS.type) {
     case 'Darwin':
-      res = await execJsMac(appID, appPathObj.stdout, scriptName, argv) ;
+      res = await execJsMac(appID, appPathText, scriptName, argv) ;
       break ;
     case 'Windows_NT':
       res = await execJsWin(appID, scriptName, argv) ;
