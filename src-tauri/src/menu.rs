@@ -1,5 +1,6 @@
 use tauri::{ Menu } ;
 
+// macOSの場合は初期設定のメニューを作る
 #[cfg(target_os = "macos")]
 pub fn create(app_name: &String) -> Menu {
   let menu = tauri::Menu::os_default(app_name) ;
@@ -7,6 +8,7 @@ pub fn create(app_name: &String) -> Menu {
   menu
 }
 
+// Windows・Linuxの場合は，ファイルと編集メニューを作る
 #[cfg(not(target_os = "macos"))]
 pub fn create(_app_name: &String) -> Menu {
   use tauri::{ CustomMenuItem, MenuItem, Submenu } ;

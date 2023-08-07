@@ -1,5 +1,5 @@
 /**
-  * @file exec
+  * @file Adobeアプリ用JavaScriptの実行を担う
   * @author sttk3.com
   * @copyright © 2023 sttk3.com
 */
@@ -17,9 +17,9 @@ const JsFolderName: string = 'scripts' ;
 /**
   * 起動している対象アプリのパスを返す。masOS専用
   * @param appID 対象アプリのbundle id。例: 'com.adobe.illustrator'
-  * @returns 例: {result: 'Macintosh HD:Applications:Adobe Illustrator 2023:Adobe Illustrator.app:'}
+  * @returns 例: {code: 0, signal: null, stdout: 'Macintosh HD:Applications:Adobe Illustrator 2023:Adobe Illustrator.app:', stderr: ''}
 */
-export const getAppPathMac = async (appID: string): Promise<ChildProcess> => {
+const getAppPathMac = async (appID: string): Promise<ChildProcess> => {
   const scriptPath: string = await resolveResource( await join(ResourceFolderName, 'get_app_path.applescript') ) ;
   const osascript: Command = new Command('run-applescript', [scriptPath, appID]) ;
   const res: ChildProcess = await osascript.execute() ;
@@ -27,11 +27,11 @@ export const getAppPathMac = async (appID: string): Promise<ChildProcess> => {
 } ;
 
 /**
-  * 起動している対象アプリのパスを返す。masOS専用
+  * 起動している対象アプリのパスを返す。Windows専用
   * @param appID 対象アプリのbundle id。例: 'com.adobe.illustrator'
-  * @returns 例: {result: 'Macintosh HD:Applications:Adobe Illustrator 2023:Adobe Illustrator.app:'}
+  * @returns 例: {code: 0, signal: null, stdout: 'C:Program files\\Adobe\\Adobe Illustrator 2023\\Support Files\\Contents\\Windows\\Illustrator.exe', stderr: ''}
 */
-export const getAppPathWin = async (appID: string): Promise<ChildProcess> => {
+const getAppPathWin = async (appID: string): Promise<ChildProcess> => {
   // exec.exeのパスはtauri.conf.jsonに書き込むため，動的に取得しない
   const ahk: Command = Command.sidecar('.resources/exec/exec', ['getAppPath', appID]) ;
   const res: ChildProcess = await ahk.execute() ;
@@ -39,9 +39,9 @@ export const getAppPathWin = async (appID: string): Promise<ChildProcess> => {
 } ;
 
 /**
-  * 起動している対象アプリのパスを返す。masOS専用
+  * 起動している対象アプリのパスを返す
   * @param appID 対象アプリのbundle id。例: 'com.adobe.illustrator'
-  * @returns 例: {result: 'Macintosh HD:Applications:Adobe Illustrator 2023:Adobe Illustrator.app:'}
+  * @returns 例: {code: 0, signal: null, stdout: 'Macintosh HD:Applications:Adobe Illustrator 2023:Adobe Illustrator.app:', stderr: ''}
 */
 export const getAppPath = async (appID: string): Promise<ChildProcess> => {
   let res: ChildProcess ;

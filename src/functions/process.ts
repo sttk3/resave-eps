@@ -7,10 +7,10 @@
 // tauri
 import { exit } from '@tauri-apps/api/process' ;
 
-export const close = async () => {
+export const close = async (): Promise<void> => {
   await exit(0) ;
 } ;
 
-export const quit = async () => {
+export const quit = async (): Promise<void> => {
   await exit(0) ;
 } ;

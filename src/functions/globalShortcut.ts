@@ -10,11 +10,14 @@ import { ShortcutHandler, isRegistered, register, unregisterAll } from '@tauri-a
 // sttk3
 import { close, quit } from './process' ;
 
-type ShortcutItem = {
+/**
+  * Shortcut登録用オブジェクト1つ分の型
+*/
+interface ShortcutItem {
   'name': string, 
   'key': string, 
   'handler': ShortcutHandler, 
-} ;
+}
 
 const ShortcutList: Array<ShortcutItem> = [
   {
@@ -29,8 +32,10 @@ const ShortcutList: Array<ShortcutItem> = [
   }, 
 ] ;
 
-// globalShortcutを有効にする
-export const enable = async () => {
+/**
+  * globalShortcutを有効にする
+*/
+export const enable = async (): Promise<void> => {
   for(let shortcut of ShortcutList) {
     const reserved = await isRegistered(shortcut.key) ;
     if( !reserved ) {
@@ -40,8 +45,10 @@ export const enable = async () => {
   }
 } ;
 
-// globalShortcutを無効にする
-export const disable = async () => {
-  console.log(`Unregistered all shortcuts`) ;
+/**
+  * globalShortcutを無効にする
+*/
+export const disable = async (): Promise<void> => {
   await unregisterAll() ;
+  console.log(`Unregistered all shortcuts`) ;
 } ;
