@@ -5,25 +5,19 @@ script namespace
 	property ObjC : a reference to current application
 	
 	on exec_js(app_path, js_path, script_args)
-		try
-			set res to my result_json(true, "null", "")
-			
-			-- Illustrator‚Ådo javascript‚É‚ÄJavaScript‚ğÀs‚·‚é
-			using terms from application "Adobe Illustrator"
-				tell application app_path
-					activate
-					
-					-- 24ŠÔ‚Ü‚Å”½‰‚ğ‘Ò‚Â
-					with timeout of ((60 * 60) * 24) seconds
-						set retval to do javascript ((js_path as POSIX file) as alias) with arguments script_args
-						set res to my result_json(true, retval, "")
-					end timeout
-				end tell
-			end using terms from
-		on error error_message number error_number
-			display dialog error_message buttons {"OK"} default button 1
-			set res to my result_json(false, "null", error_message)
-		end try
+		set res to missing value
+		
+		-- Illustrator‚Ådo javascript‚É‚ÄJavaScript‚ğÀs‚·‚é
+		using terms from application "Adobe Illustrator"
+			tell application app_path
+				activate
+				
+				-- 24ŠÔ‚Ü‚Å”½‰‚ğ‘Ò‚Â
+				with timeout of ((60 * 60) * 24) seconds
+					set res to do javascript ((js_path as POSIX file) as alias) with arguments script_args
+				end timeout
+			end tell
+		end using terms from
 		
 		return res
 	end exec_js
@@ -69,20 +63,6 @@ script namespace
 		
 		return {filename:filename, basename:basename, name_extension:name_extension, dirname:dirname, original_path:original_path, uti:uti}
 	end parse_path
-	
-	on result_json(succeed_bool, result_text, error_text)
-		if ((result_text is "undefined") or (result_text is "null")) then
-			set temp_record to {|result|:missing value, succeed:succeed_bool, stderr:error_text} as record
-		else
-			set temp_record to {|result|:result_text, succeed:succeed_bool, stderr:error_text} as record
-		end if
-		
-		set dict to ObjC's NSDictionary's dictionaryWithDictionary:temp_record
-		set json_data to ObjC's NSJSONSerialization's dataWithJSONObject:dict options:0 |error|:(missing value)
-		set nsstr to ObjC's NSString's alloc()'s initWithData:json_data encoding:(ObjC's NSUTF8StringEncoding)
-		set res to nsstr as text
-		return res
-	end result_json
 end script
 
 on run {app_path, js_path, script_args}
