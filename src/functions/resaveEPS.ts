@@ -36,7 +36,13 @@ export const resaveEPS = async (pathList: Array<string>): Promise<ChildProcess> 
   if(!res.code) {
     // succeed
     const appName = await getName() ;
-    await notify({title: appName, body: `Processed count: ${res.stdout}`}) ;
+    let bodyText: string ;
+    if(res.stdout === '') {
+      bodyText = 'Nothing happend.' ;
+    } else {
+      bodyText = `Processed count: ${res.stdout}` ;
+    }
+    await notify({title: appName, body: bodyText}) ;
   } else {
     // error
     await message(res.stderr) ;
