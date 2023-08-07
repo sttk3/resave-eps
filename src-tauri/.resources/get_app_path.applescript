@@ -7,7 +7,7 @@ script namespace
 	on get_app_path(target_app_id)
 		-- Tauriのshellがエラーハンドリングしやすいので，AppleScript側ではcatchせずに流したほうが楽
 		
-		set res to missing value
+		set res to ""
 		
 		-- idが一致する起動中のアプリを取得する。なければ終了する
 		set app_record to my get_app(target_app_id as text)

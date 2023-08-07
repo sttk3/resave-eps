@@ -5,7 +5,7 @@ script namespace
 	property ObjC : a reference to current application
 	
 	on exec_js(app_path, js_path, script_args)
-		set res to missing value
+		set res to ""
 		
 		-- Photoshop‚Ådo javascript‚É‚ÄJavaScript‚ğÀs‚·‚é
 		using terms from application id "com.adobe.Photoshop"
