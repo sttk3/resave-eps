@@ -77,7 +77,11 @@ export const App = () => {
           const targetItems = argValue.filter((item) => {return (typeof item === 'string')}) ;
           await resaveEPS(targetItems) ;
         }
-        await quit() ;
+
+        // 通知が見れるくらいの余裕を持ってから終了する
+        setTimeout(async () => {
+          await quit() ;
+        }, 3000) ;
       }) ;
     })() ;
     
