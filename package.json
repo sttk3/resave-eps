@@ -10,8 +10,6 @@
     "tauri": "tauri"
   },
   "dependencies": {
-    "@spectrum-web-components/dropzone": "^0.33.2",
-    "@spectrum-web-components/illustrated-message": "^0.33.2",
     "@spectrum-web-components/theme": "^0.33.2",
     "@tauri-apps/api": "^1.4.0",
     "preact": "^10.15.1"
