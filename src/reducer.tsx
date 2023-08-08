@@ -44,7 +44,7 @@ export type Action =
 ;
 
 export const reducer = (state: State, action: Action): State => {
-  let tempState = structuredClone(state) ;
+  let tempState = JSON.parse(JSON.stringify(state)) ;
 
   let newState: State ;
   switch(action.type) {
