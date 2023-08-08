@@ -71,18 +71,26 @@ export const App = () => {
       }
 
       // cliで実行された場合は処理する
-      getMatches().then(async (matches) => {
-        const argValue = matches.args.from?.value ;
-        if(Array.isArray(argValue)) {
-          const targetItems = argValue.filter((item) => {return (typeof item === 'string')}) ;
-          await resaveEPS(targetItems) ;
-        }
+      getMatches().then(
+        // resolve
+        async (matches) => {
+          const argValue = matches.args.from?.value ;
+          if(Array.isArray(argValue)) {
+            const targetItems = argValue.filter((item) => {return (typeof item === 'string')}) ;
+            await resaveEPS(targetItems) ;
+          }
 
-        // 通知が見れるくらいの余裕を持ってから終了する
-        setTimeout(async () => {
-          await quit() ;
-        }, 3000) ;
-      }) ;
+          // 通知を読めるくらいの余裕を持ってから終了する
+          setTimeout(async () => {
+            await quit() ;
+          }, 3000) ;
+        }, 
+
+        // reject
+        async () => {
+          // skip
+        }
+      ) ;
     })() ;
     
     // unmount時，監視を止める
