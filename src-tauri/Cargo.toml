@@ -1,7 +1,7 @@
 [package]
 name = "resave-eps"
-version = "0.0.0"
-description = "A Tauri App"
+version = "2.0.0"
+description = "resaveEPS"
 authors = ["you"]
 license = ""
 repository = ""
