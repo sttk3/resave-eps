@@ -40,7 +40,7 @@ export const resaveEPS = async (pathList: Array<string>): Promise<ChildProcess> 
     if(res.stdout === '') {
       bodyText = 'Nothing happend.' ;
     } else {
-      bodyText = `Processed count: ${res.stdout}` ;
+      bodyText = `Finished documents count: ${res.stdout}` ;
     }
     await notify({title: appName, body: bodyText}) ;
   } else {
